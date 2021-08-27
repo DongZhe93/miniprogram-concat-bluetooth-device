@@ -68,12 +68,12 @@ Page({
   },
   // 发送开阀指令
   sendOpenValve() {
-    this.changeStatus('发送开发指令...')
-    // 根据文档中拼接得到 统一水控 和 易通 设备发送的指令不一样
+    this.changeStatus('发送开阀指令...')
+    // TODO 设备发送的指令根据设备区分
     let cmdInfo = '1111110011111101010100000000'
-    if (this._deviceType === '1') { // 统一水控
+    if (this._deviceType === '1') {
       cmdInfo = 'e1' + cmdInfo
-    } else { // 易通
+    } else {
       cmdInfo = 'f1' + cmdInfo
     }
     // 拼接得到str（前15组数据加最后一组校验位）
