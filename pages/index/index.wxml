@@ -1,0 +1,5 @@
+<!--index.wxml-->
+<button bindtap="getDeviceIdByScan">扫描设备二维码</button>
+<view class="status">当前状态：<text>{{status}}</text></view>
+<button wx:if="{{connected}}" bindtap="sendOpenValve">发送开阀指令</button>
+<button wx:if="{{connected}}" bindtap="closeBluetoothAdapter">关闭蓝牙模块</button>

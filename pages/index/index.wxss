@@ -1,0 +1,10 @@
+/**index.wxss**/
+button {
+  margin-top: 30px
+}
+
+.status {
+  margin-top: 10px;
+  text-align: center;
+  color: #333
+}
