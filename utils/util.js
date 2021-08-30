@@ -44,11 +44,11 @@ function inArray(arr, key, val) {
 function str2Bytes(str) {
   var pos = 0;
   var len = str.length;
-  if (len % 2 != 0) {
+  if (len % 2 !== 0) {
     return null;
   }
   len /= 2;
-  var hexA = new Array();
+  var hexA = [];
   for (var i = 0; i < len; i++) {
     var s = str.substr(pos, 2);
     var v = parseInt(s, 16);
@@ -71,7 +71,7 @@ function bytes2Str(arr) {
     } else {
       tmp = num.toString(16);
     }
-    if (tmp.length == 1) {
+    if (tmp.length === 1) {
       tmp = "0" + tmp;
     }
     str += tmp;
