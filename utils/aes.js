@@ -6,10 +6,10 @@ const AES = (function () {
   // instead they take a input buffer and pass it around to keep state
   // and it is also used as output.
 
-  var block_size_bytes = 16;
-  var block_size_words = 4;
-  var nb = 4;
-  var sbox = [
+  const block_size_bytes = 16;
+  const block_size_words = 4;
+  const nb = 4;
+  const sbox = [
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
     0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
     0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
@@ -28,7 +28,7 @@ const AES = (function () {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
   ];
 
-  var inv_sbox = [
+  const inv_sbox = [
     0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
     0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
     0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
@@ -47,7 +47,7 @@ const AES = (function () {
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
   ];
 
-  var rcon = [
+  const rcon = [
     0x00000000,
     0x01000000,
     0x02000000,
@@ -63,8 +63,8 @@ const AES = (function () {
 
   // from http://www.cs.utsa.edu/~wagner/laws/FFM.html
   function ffmul(a, b) {
-    var r = 0;
-    var t;
+    let r = 0;
+    let t;
 
     while (a) {
       if ((a & 1)) {
@@ -84,9 +84,9 @@ const AES = (function () {
   }
 
   function ffmul_table(n) {
-    var table = new Array(256);
+    const table = new Array(256);
 
-    for (var i = 0; i < 256; i++) {
+    for (let i = 0; i < 256; i++) {
       table[i] = ffmul(n, i) & 0xff;
     }
 
@@ -94,12 +94,12 @@ const AES = (function () {
   }
 
   // precompute for factors used in (inv)mix_columns
-  var ffmul_t_2 = ffmul_table(2);
-  var ffmul_t_3 = ffmul_table(3);
-  var ffmul_t_9 = ffmul_table(9);
-  var ffmul_t_b = ffmul_table(0xb);
-  var ffmul_t_d = ffmul_table(0xd);
-  var ffmul_t_e = ffmul_table(0xe);
+  const ffmul_t_2 = ffmul_table(2);
+  const ffmul_t_3 = ffmul_table(3);
+  const ffmul_t_9 = ffmul_table(9);
+  const ffmul_t_b = ffmul_table(0xb);
+  const ffmul_t_d = ffmul_table(0xd);
+  const ffmul_t_e = ffmul_table(0xe);
 
   function sub_word(w) {
     return (
@@ -119,16 +119,16 @@ const AES = (function () {
   }
 
   // little endian if first byte in 32 bit uint 1 is 1
-  var is_little_endian = ((new Uint8Array((new Uint32Array([1])).buffer))[0] == 1);
+  const is_little_endian = ((new Uint8Array((new Uint32Array([1])).buffer))[0] == 1);
 
   // key is 16, 24 or 32 byte ArrayBuffer
   function key_expansion(key) {
-    var key_u8 = new Uint8Array(key);
-    var nk = key_u8.length / 4;
-    var nr = nk + 6;
+    const key_u8 = new Uint8Array(key);
+    const nk = key_u8.length / 4;
+    const nr = nk + 6;
 
-    var w = new Uint32Array(nb * (nr + 1));
-    for (var i = 0; i < nk; i++) {
+    const w = new Uint32Array(nb * (nr + 1));
+    for (let i = 0; i < nk; i++) {
       w[i] = (
         key_u8[i * 4] << 24 |
         key_u8[i * 4 + 1] << 16 |
@@ -137,8 +137,8 @@ const AES = (function () {
       );
     }
 
-    for (var i = nk; i < nb * (nr + 1); i++) {
-      var temp = w[i - 1];
+    for (let i = nk; i < nb * (nr + 1); i++) {
+      let temp = w[i - 1];
       if (i % nk == 0) {
         temp = sub_word(rot_word(temp)) ^ rcon[i / nk];
       } else if (nk > 6 && i % nk == 4) {
@@ -151,7 +151,7 @@ const AES = (function () {
     // make sure key schedule byte order matches state byte order
     // this is so that correct bytes are xored for add_round_key
     if (is_little_endian) {
-      for (var i = 0; i < w.length; i++) {
+      for (let i = 0; i < w.length; i++) {
         w[i] = endian_swap32(w[i]);
       }
     }
@@ -162,10 +162,10 @@ const AES = (function () {
   // state_u8 is 16 byte Uint8Array (also used as output)
   // w is value from key_expansion
   function cipher(state_u32, w) {
-    var nr = (w.length / nb - 1) * 4;
-    var s0, s1, s2, s3;
-    var t0, t1, t2, t3;
-    var m0, m1, m2, m3;
+    const nr = (w.length / nb - 1) * 4;
+    let s0, s1, s2, s3;
+    let t0, t1, t2, t3;
+    let m0, m1, m2, m3;
 
     // add_round_key
     s0 = (state_u32[0] ^ w[0]) >>> 0;
@@ -173,7 +173,7 @@ const AES = (function () {
     s2 = (state_u32[2] ^ w[2]) >>> 0;
     s3 = (state_u32[3] ^ w[3]) >>> 0;
 
-    for (var round = 4; round < nr; round += 4) {
+    for (let round = 4; round < nr; round += 4) {
       // sub_byte, shift_rows, mix_columns, add_round_key
 
       t0 = s0;
@@ -233,9 +233,9 @@ const AES = (function () {
   // state_u8 is 16 byte Uint8Array (also used as output)
   // w is value from key_expansion
   function inv_cipher(state_u32, w) {
-    var nr = (w.length / nb - 1) * 4;
-    var s0, s1, s2, s3;
-    var t0, t1, t2, t3;
+    const nr = (w.length / nb - 1) * 4;
+    let s0, s1, s2, s3;
+    let t0, t1, t2, t3;
 
     // add_round_key
     s0 = (state_u32[0] ^ w[nr]) >>> 0;
@@ -243,7 +243,7 @@ const AES = (function () {
     s2 = (state_u32[2] ^ w[nr + 2]) >>> 0;
     s3 = (state_u32[3] ^ w[nr + 3]) >>> 0;
 
-    for (var round = nr - 4; round > 0; round -= 4) {
+    for (let round = nr - 4; round > 0; round -= 4) {
       // inv_shift_rows, inv_sub_byte, add_round_key
 
       t0 = s0;
@@ -325,18 +325,18 @@ const AES = (function () {
 })();
 
 function encryptAesCbc(input, key, iv) {
-  var input_u32 = new Uint32Array(input);
-  var output_u32 = new Uint32Array(input_u32.length);
-  var state_block_u32 = new Uint32Array(AES.block_size_words);
-  var prev_cipher_block_u32 = new Uint32Array(AES.block_size_words);
-  var w = AES.key_expansion(key);
+  const input_u32 = new Uint32Array(input);
+  const output_u32 = new Uint32Array(input_u32.length);
+  const state_block_u32 = new Uint32Array(AES.block_size_words);
+  const prev_cipher_block_u32 = new Uint32Array(AES.block_size_words);
+  const w = AES.key_expansion(key);
   prev_cipher_block_u32.set(new Uint32Array(iv));
-  for (var i = 0; i < input_u32.length; i += AES.block_size_words) {
+  for (let i = 0; i < input_u32.length; i += AES.block_size_words) {
     state_block_u32[0] = input_u32[i + 0];
     state_block_u32[1] = input_u32[i + 1];
     state_block_u32[2] = input_u32[i + 2];
     state_block_u32[3] = input_u32[i + 3];
-    for (var j = 0; j < AES.block_size_words; j++) {
+    for (let j = 0; j < AES.block_size_words; j++) {
       state_block_u32[j] ^= prev_cipher_block_u32[j];
     }
     AES.cipher(state_block_u32, w);
@@ -347,21 +347,21 @@ function encryptAesCbc(input, key, iv) {
 }
 
 function decryptAesCbc(input, key, iv) {
-  var input_u32 = new Uint32Array(input);
-  var output_u32 = new Uint32Array(input_u32.length);
-  var state_block_u32 = new Uint32Array(AES.block_size_words);
-  var input_block_u32 = new Uint32Array(AES.block_size_words);
-  var prev_input_block_u32 = new Uint32Array(AES.block_size_words);
-  var w = AES.key_expansion(key);
+  const input_u32 = new Uint32Array(input);
+  const output_u32 = new Uint32Array(input_u32.length);
+  const state_block_u32 = new Uint32Array(AES.block_size_words);
+  const input_block_u32 = new Uint32Array(AES.block_size_words);
+  const prev_input_block_u32 = new Uint32Array(AES.block_size_words);
+  const w = AES.key_expansion(key);
   prev_input_block_u32.set(new Uint32Array(iv));
-  for (var i = 0; i < input_u32.length; i += AES.block_size_words) {
+  for (let i = 0; i < input_u32.length; i += AES.block_size_words) {
     input_block_u32[0] = input_u32[i + 0];
     input_block_u32[1] = input_u32[i + 1];
     input_block_u32[2] = input_u32[i + 2];
     input_block_u32[3] = input_u32[i + 3];
     state_block_u32.set(input_block_u32);
     AES.inv_cipher(state_block_u32, w);
-    for (var j = 0; j < AES.block_size_words; j++) {
+    for (let j = 0; j < AES.block_size_words; j++) {
       state_block_u32[j] ^= prev_input_block_u32[j];
     }
     output_u32.set(state_block_u32, i);
