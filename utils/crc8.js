@@ -58,14 +58,14 @@ const MAXIM = {
  * @return {string} 返回16进制的2位字符串
  */
 function crc8(data) {
-  data = new Uint8Array(data)
+  const uintData = new Uint8Array(data)
   const {
     init,
     xorOut,
     table
   } = MAXIM;
   let crc = init;
-  for (const b of data){
+  for (const b of uintData){
     crc = table[crc ^ b];
   }
   return ((crc ^ xorOut) & 0xFFFF).toString(16);

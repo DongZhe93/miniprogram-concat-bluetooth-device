@@ -42,16 +42,16 @@ function inArray(arr, key, val) {
 
 // 字符串转16进制数组
 function str2Bytes(str) {
-  var pos = 0;
-  var len = str.length;
+  let pos = 0;
+  let len = str.length;
   if (len % 2 !== 0) {
     return null;
   }
   len /= 2;
-  var hexA = [];
-  for (var i = 0; i < len; i++) {
-    var s = str.substr(pos, 2);
-    var v = parseInt(s, 16);
+  const hexA = [];
+  for (let i = 0; i < len; i++) {
+    const s = str.substr(pos, 2);
+    let v = parseInt(s, 16);
     if (v >= 127) v = v - 255 - 1
     hexA.push(v);
     pos += 2;
@@ -61,10 +61,10 @@ function str2Bytes(str) {
 
 // 字节数组转十六进制字符串
 function bytes2Str(arr) {
-  var str = "";
-  for (var i = 0; i < arr.length; i++) {
-    var tmp;
-    var num = arr[i];
+  let str = "";
+  for (let i = 0; i < arr.length; i++) {
+    let tmp;
+    const num = arr[i];
     if (num < 0) {
       //此处填坑，当byte因为符合位导致数值为负时候，需要对数据进行处理
       tmp = (255 + num + 1).toString(16);
